@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import Gauge from './components/Gauge.vue';
+import TrackMap from './components/TrackMap.vue';
 
 const statusMessage = ref('Waiting for server...');
 const statusColor = ref('yellow');
@@ -28,6 +29,13 @@ const connectWebSocket = () => {
 
 onMounted(() => connectWebSocket());
 onUnmounted(() => { if (ws) ws.close(); });
+
+const trackProgress = ref(0);
+
+setInterval(() => {
+  trackProgress.value += 0.5;
+  if (trackProgress.value >= 100) trackProgress.value = 0;
+}, 50);
 </script>
 
 <template>
@@ -43,6 +51,7 @@ onUnmounted(() => { if (ws) ws.close(); });
       <Gauge title="AIR" :value="telemetry.air" :max="100"  unit="°C" color="#b2ff05" />
       <Gauge title="HUM" :value="telemetry.hum" :max="100" unit="%"  color="#3344ff" />
     </div>
+    <TrackMap :progress="trackProgress" />
 
     <div class="message-box"> {{ telemetry.message }}</div>
   </div>
