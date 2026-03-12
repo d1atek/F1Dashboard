@@ -30,15 +30,15 @@ const gaugeStyle = computed(() => ({
 
 <style scoped>
 .gauge-container {
-  width: 120px; height: 120px; border-radius: 50%;
+  width: 80px; height: 80px; border-radius: 50%;
   display: flex; justify-content: center; align-items: center;
   transition: background 0.3s ease-in-out;
 }
 .gauge-center {
-  width: 100px; height: 100px; background-color: #111; border-radius: 50%;
+  width: 65px; height: 65px; background-color: #111; border-radius: 50%;
   display: flex; flex-direction: column; justify-content: center; align-items: center;
 }
-.gauge-value { font-size: 32px; font-weight: bold; margin: 0; }
-.gauge-unit { font-size: 12px; color: #888; }
-.gauge-label { font-size: 14px; font-weight: bold; }
+.gauge-value { font-size: 18px; font-weight: bold; margin: 0; }
+.gauge-unit { font-size: 8px; color: #888; }
+.gauge-label { font-size: 12px; font-weight: bold; }
 </style>

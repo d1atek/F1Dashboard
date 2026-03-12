@@ -2,6 +2,8 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import Gauge from './components/Gauge.vue';
 import TrackMap from './components/TrackMap.vue';
+import CommandBox from './components/CommandBox.vue';
+import TeamRadio from './components/TeamRadio.vue';
 
 const statusMessage = ref('Waiting for server...');
 const statusColor = ref('yellow');
@@ -18,6 +20,12 @@ const connectWebSocket = () => {
 
   ws.onmessage = (event) => {
     telemetry.value = JSON.parse(event.data);
+  };
+
+  const sendMessage = (messageText) => {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      ws.send(JSON.stringify({ text: messageText }));
+    }
   };
   
   ws.onclose = () => {
@@ -53,7 +61,8 @@ setInterval(() => {
     </div>
     <TrackMap :progress="trackProgress" />
 
-    <div class="message-box"> {{ telemetry.message }}</div>
+    <TeamRadio :latestMessage="telemetry.message" />
+    <CommandBox @sendCommand="sendMessage" />
   </div>
 </template>
 
