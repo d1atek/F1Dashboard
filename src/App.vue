@@ -7,8 +7,21 @@ import TeamRadio from './components/TeamRadio.vue';
 
 const statusMessage = ref('Waiting for server...');
 const statusColor = ref('yellow');
-const telemetry = ref({ trc: 0, air: 0, hum: 0, message: '' });
+const telemetry = ref({ trc: 0, air: 0, hum: 0 });
+const latestMessage = ref('');
 let ws = null;
+
+const sendMessage = (messageText) => {
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({ text: messageText }));
+  }
+};
+
+const sendDataToServer = (dataObject) => {
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify(dataObject));
+  }
+};
 
 const connectWebSocket = () => {
   ws = new WebSocket("ws://localhost:8000/ws");
@@ -19,13 +32,7 @@ const connectWebSocket = () => {
   };
 
   ws.onmessage = (event) => {
-    telemetry.value = JSON.parse(event.data);
-  };
-
-  const sendMessage = (messageText) => {
-    if (ws && ws.readyState === WebSocket.OPEN) {
-      ws.send(JSON.stringify({ text: messageText }));
-    }
+    latestMessage.value = JSON.parse(event.data);
   };
   
   ws.onclose = () => {
@@ -35,7 +42,12 @@ const connectWebSocket = () => {
   };
 };
 
-onMounted(() => connectWebSocket());
+onMounted(() => {
+  connectWebSocket();
+  telemetry.value.trc = 60 + (Math.random() - 0.5) * 10;
+  telemetry.value.air = 20 + (Math.random() - 0.5) * 10;
+  telemetry.value.hum = 50 + (Math.random() - 0.5) * 10;
+});
 onUnmounted(() => { if (ws) ws.close(); });
 
 const trackProgress = ref(0);
@@ -43,7 +55,12 @@ const trackProgress = ref(0);
 setInterval(() => {
   trackProgress.value += 0.5;
   if (trackProgress.value >= 100) trackProgress.value = 0;
+  telemetry.value.trc += (Math.random() - 0.5) / 10;
+  telemetry.value.air += (Math.random() - 0.5) / 10;
+  telemetry.value.hum += (Math.random() - 0.5) / 10;
+  sendDataToServer({ trc: telemetry.value.trc, air: telemetry.value.air, hum: telemetry.value.hum });
 }, 50);
+
 </script>
 
 <template>
@@ -61,7 +78,7 @@ setInterval(() => {
     </div>
     <TrackMap :progress="trackProgress" />
 
-    <TeamRadio :latestMessage="telemetry.message" />
+    <TeamRadio :latestMessage="latestMessage" />
     <CommandBox @sendCommand="sendMessage" />
   </div>
 </template>
