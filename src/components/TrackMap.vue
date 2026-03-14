@@ -1,11 +1,15 @@
-<script setup>
+<script setup lang="ts">
 import { ref, watch, onMounted } from 'vue';
 
-const props = defineProps({
-  progress: { type: Number, default: 0 } 
+interface Props {
+  progress?: number;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  progress: 0 
 });
 
-const circuitPath = ref(null);
+const circuitPath = ref<SVGPathElement | null>(null);
 const carPosition = ref({ x: 150, y: 200 });
 
 const updateCarPosition = () => {

@@ -1,11 +1,18 @@
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from 'vue';
 
-const props = defineProps({
-  latestMessage: { type: String, required: true }
-});
+interface Props {
+  latestMessage: string;
+}
 
-const activeMessages = ref([]);
+const props = defineProps<Props>();
+
+interface Message {
+  id: number;
+  text: string;
+}
+
+const activeMessages = ref<Message[]>([]);
 let messageIdCounter = 0;
 
 watch(() => props.latestMessage, (newMsg, oldMsg) => {

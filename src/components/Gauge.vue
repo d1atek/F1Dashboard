@@ -1,12 +1,18 @@
-<script setup>
+<script setup lang="ts">
 import { computed } from 'vue';
 
-const props = defineProps({
-  title: { type: String, required: true },
-  value: { type: Number, required: true },
-  max:   { type: Number, default: 100 },
-  unit:  { type: String, default: '' },
-  color: { type: String, default: '#b2ff05' }
+interface Props {
+  title: string;
+  value: number;
+  max?: number;
+  unit?: string;
+  color?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  max: 100,
+  unit: '',
+  color: '#b2ff05'
 });
 
 const percentage = computed(() => {

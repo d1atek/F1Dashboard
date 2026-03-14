@@ -1,65 +1,26 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
 import Gauge from './components/Gauge.vue';
 import TrackMap from './components/TrackMap.vue';
 import CommandBox from './components/CommandBox.vue';
 import TeamRadio from './components/TeamRadio.vue';
+import { useTelemetry } from './composables/useTelemetry';
 
-const statusMessage = ref('Waiting for server...');
-const statusColor = ref('yellow');
-const telemetry = ref({ trc: 0, air: 0, hum: 0 });
-const latestMessage = ref('');
-let ws = null;
-
-const sendMessage = (messageText) => {
-  if (ws && ws.readyState === WebSocket.OPEN) {
-    ws.send(JSON.stringify({ text: messageText }));
-  }
-};
-
-const sendDataToServer = (dataObject) => {
-  if (ws && ws.readyState === WebSocket.OPEN) {
-    ws.send(JSON.stringify(dataObject));
-  }
-};
-
-const connectWebSocket = () => {
-  ws = new WebSocket("ws://localhost:8000/ws");
-
-  ws.onopen = () => { 
-    statusMessage.value = "Connected !"; 
-    statusColor.value = "lime";
-  };
-
-  ws.onmessage = (event) => {
-    latestMessage.value = JSON.parse(event.data);
-  };
-  
-  ws.onclose = () => {
-    statusMessage.value = "Connection lost. Reconnecting in 3s...";
-    statusColor.value = "red";
-    setTimeout(connectWebSocket, 3000); 
-  };
-};
-
-onMounted(() => {
-  connectWebSocket();
-  telemetry.value.trc = 60 + (Math.random() - 0.5) * 10;
-  telemetry.value.air = 20 + (Math.random() - 0.5) * 10;
-  telemetry.value.hum = 50 + (Math.random() - 0.5) * 10;
-});
-onUnmounted(() => { if (ws) ws.close(); });
+const { statusMessage, statusColor, telemetry, latestMessage, sendMessage } = useTelemetry();
 
 const trackProgress = ref(0);
+let intervalId: number | null = null;
 
-setInterval(() => {
-  trackProgress.value += 0.5;
-  if (trackProgress.value >= 100) trackProgress.value = 0;
-  telemetry.value.trc += (Math.random() - 0.5) / 10;
-  telemetry.value.air += (Math.random() - 0.5) / 10;
-  telemetry.value.hum += (Math.random() - 0.5) / 10;
-  sendDataToServer({ trc: telemetry.value.trc, air: telemetry.value.air, hum: telemetry.value.hum });
-}, 50);
+onMounted(() => {
+  intervalId = setInterval(() => {
+    trackProgress.value += 0.5;
+    if (trackProgress.value >= 100) trackProgress.value = 0;
+  }, 50) as unknown as number;
+});
+
+onUnmounted(() => {
+  if (intervalId !== null) clearInterval(intervalId);
+});
 
 </script>
 
@@ -89,9 +50,5 @@ setInterval(() => {
 }
 .dashboard-row {
   display: flex; gap: 30px; margin-top: 20px;
-}
-.message-box {
-  margin-top: 30px; padding: 15px; border: 1px solid #333; 
-  border-radius: 8px; color: #ccc; min-width: 300px; text-align: center;
 }
 </style>
