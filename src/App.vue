@@ -46,9 +46,9 @@ onUnmounted(() => {
 
 <style scoped>
 .dashboard-wrapper {
-  display: flex; flex-direction: column; align-items: center; padding-top: 50px;
+  display: flex; flex-direction: column; align-items: center; padding: 20px; width: 100%; max-width: 1200px; margin: 0 auto; box-sizing: border-box;
 }
 .dashboard-row {
-  display: flex; gap: 30px; margin-top: 20px;
+  display: flex; gap: 30px; margin-top: 20px; flex-wrap: wrap; justify-content: center;
 }
 </style>

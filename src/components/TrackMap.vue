@@ -59,19 +59,12 @@ watch(() => props.progress, () => {
 </template>
 
 <style scoped>
-.track-container {
-  width: 100%;
-  max-width: 500px;
-  margin: 20px auto;
-  background-color: #1a1a1a;
-  border-radius: 10px;
-  padding: 15px;
-  border: 1px solid #333;
-}
 .circuit-svg {
-  width: 120%;
+  width: 100%;
+  max-width: 600px;
   height: auto;
   display: block;
+  margin: 0 auto;
 }
 .car-dot {
   transition: all 0.1s linear; 
