@@ -39,7 +39,16 @@ export function useTelemetry() {
     };
 
     ws.onmessage = (event) => {
-      latestMessage.value = JSON.parse(event.data);
+      const data = JSON.parse(event.data);
+      if (data.msg) {
+        latestMessage.value = data.msg;
+      }
+      if (data.tyres) {
+        telemetry.value.fl = 0;
+        telemetry.value.fr = 0;
+        telemetry.value.rl = 0;
+        telemetry.value.rr = 0;
+      }
     };
 
     ws.onclose = () => {
@@ -63,10 +72,10 @@ export function useTelemetry() {
       telemetry.value.trc += (Math.random() - 0.5) / 10;
       telemetry.value.air += (Math.random() - 0.5) / 10;
       telemetry.value.hum += (Math.random() - 0.5) / 10;
-      telemetry.value.fl += (Math.random()) / 50;
-      telemetry.value.fr += (Math.random()) / 50;
-      telemetry.value.rl += (Math.random()) / 50;
-      telemetry.value.rr += (Math.random()) / 50;
+      telemetry.value.fl = Math.min(telemetry.value.fl + Math.random() / 50, 100);
+      telemetry.value.fr = Math.min(telemetry.value.fr + Math.random() / 50, 100);
+      telemetry.value.rl = Math.min(telemetry.value.rl + Math.random() / 50, 100);
+      telemetry.value.rr = Math.min(telemetry.value.rr + Math.random() / 50, 100);
       sendDataToServer({ trc: telemetry.value.trc, air: telemetry.value.air, hum: telemetry.value.hum, fl: telemetry.value.fl, fr: telemetry.value.fr, rl: telemetry.value.rl, rr: telemetry.value.rr });
     }, 50) as unknown as number;
   });

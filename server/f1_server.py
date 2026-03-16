@@ -23,6 +23,7 @@ class F1Server:
       from f1_server import server
       server.get_condition()
       server.get_tire_state()
+      await server.send_change_tire()
       server.register_msg_handler(handler)
       await server.send_message("hello")  # will send over websocket if connected, otherwise returns the formatted string
     """
@@ -89,13 +90,11 @@ class F1Server:
     def clear_websocket(self):
         self._websocket = None
 
-    async def send_message(self, user_message: str):
-        """Send a message to the connected websocket if present.
+    async def send_payload(self, payload: str):
+        """Send a payload to the connected websocket if present.
 
         If no websocket is connected this returns the formatted response string.
-        When a websocket is connected, the function returns True on success.
-        """
-        payload = json.dumps(user_message)
+        When a websocket is connected, the function returns True on success."""
         if self._websocket is not None:
             try:
                 await self._websocket.send_text(payload)
@@ -105,6 +104,16 @@ class F1Server:
                 self.clear_websocket()
                 return payload
         return payload
+
+    async def send_message(self, user_message: str):
+        """Send a message to the connected websocket"""
+        payload = json.dumps({"msg": user_message})
+        return await self.send_payload(payload)
+
+    async def send_tyre_change(self):
+        """Send a tyre change to the connected websocket"""
+        payload = json.dumps({"tyres": True})
+        return await self.send_payload(payload)
 
     async def send_all_data(self, msg: str = ""):
         await self.send_message(msg+f" Condition: {self.get_condition()} Tire State: {self.get_tire_state()}")
