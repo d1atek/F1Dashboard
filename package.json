@@ -11,6 +11,7 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
+    "marked": "^17.0.4",
     "vue": "^3.5.25"
   },
   "devDependencies": {

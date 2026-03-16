@@ -4,6 +4,7 @@ import Gauge from './components/Gauge.vue';
 import TrackMap from './components/TrackMap.vue';
 import CommandBox from './components/CommandBox.vue';
 import TeamRadio from './components/TeamRadio.vue';
+import CarStatus from './components/CarStatus.vue';
 import { useTelemetry } from './composables/useTelemetry';
 
 const { statusMessage, statusColor, telemetry, latestMessage, sendMessage } = useTelemetry();
@@ -33,14 +34,21 @@ onUnmounted(() => {
     </div>
 
     <div class="dashboard-row">
-      <Gauge title="TRC" :value="telemetry.trc" :max="100" unit="°C" color="#b2ff05" />
-      <Gauge title="AIR" :value="telemetry.air" :max="100"  unit="°C" color="#b2ff05" />
-      <Gauge title="HUM" :value="telemetry.hum" :max="100" unit="%"  color="#3344ff" />
+      <div> 
+        <div class="dashboard-row">
+          <Gauge title="TRC" :value="telemetry.trc" :max="100" unit="°C" color="#b2ff05" />
+          <Gauge title="AIR" :value="telemetry.air" :max="100"  unit="°C" color="#b2ff05" />
+          <Gauge title="HUM" :value="telemetry.hum" :max="100" unit="%"  color="#3344ff" />
+        </div>
+        <TrackMap :progress="trackProgress" />
+      </div>
+      <CarStatus :tires="{ fl: 12, fr: 15, rl: 45, rr: 75 }" />
     </div>
-    <TrackMap :progress="trackProgress" />
 
-    <TeamRadio :latestMessage="latestMessage" />
-    <CommandBox @sendCommand="sendMessage" />
+    <div class="dashboard-row">
+      <TeamRadio :latestMessage="latestMessage" />
+      <CommandBox @sendCommand="sendMessage" />
+    </div>
   </div>
 </template>
 

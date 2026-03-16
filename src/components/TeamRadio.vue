@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
+import { marked } from 'marked';
 
 interface Props {
   latestMessage: string;
@@ -35,9 +36,7 @@ watch(() => props.latestMessage, (newMsg, oldMsg) => {
         <div class="radio-header">
           TEAM RADIO
         </div>
-        <div class="radio-text">
-          {{ msg.text }}
-        </div>
+        <div class="radio-text markdown-content" v-html="marked.parse(msg.text)"></div>
       </div>
       
     </TransitionGroup>
@@ -96,5 +95,24 @@ watch(() => props.latestMessage, (newMsg, oldMsg) => {
 .radio-anim-leave-to {
   opacity: 0;
   transform: scale(0.9);
+}
+
+.radio-text :deep(table) {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+.radio-text :deep(th), 
+.radio-text :deep(td) {
+  border: 1px solid #444;
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.radio-text :deep(p) {
+  margin: 0 0 8px 0; 
 }
 </style>
