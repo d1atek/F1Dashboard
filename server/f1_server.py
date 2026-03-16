@@ -22,6 +22,8 @@ class F1Server:
     Usage:
       from f1_server import server
       server.get_condition()
+      server.get_tire_state()
+      server.register_msg_handler(handler)
       await server.send_message("hello")  # will send over websocket if connected, otherwise returns the formatted string
     """
 
@@ -30,6 +32,12 @@ class F1Server:
             "trc": 0.0,
             "air": 0.0,
             "hum": 0.0,
+        }
+        self.tire_state = {
+            "fl": 0.0,
+            "fr": 0.0,
+            "rl": 0.0,
+            "rr": 0.0,
         }
         # when a websocket client connects, we'll keep a reference here
         self._websocket: WebSocket | None = None
@@ -50,6 +58,10 @@ class F1Server:
         """Return a copy of the current condition state."""
         return dict(self.cond_state)
 
+    def get_tire_state(self):
+        """Return a copy of the current tire state."""
+        return dict(self.tire_state)
+
     def update_condition(self, trc: float | None = None, air: float | None = None, hum: float | None = None):
         """Update the internal condition state with any provided values."""
         if trc is not None:
@@ -58,6 +70,17 @@ class F1Server:
             self.cond_state["air"] = air
         if hum is not None:
             self.cond_state["hum"] = hum
+
+    def update_tire_state(self, fl: float | None = None, fr: float | None = None, rl: float | None = None, rr: float | None = None):
+        """Update the internal tire state with any provided values."""
+        if fl is not None:
+            self.tire_state["fl"] = fl
+        if fr is not None:
+            self.tire_state["fr"] = fr
+        if rl is not None:
+            self.tire_state["rl"] = rl
+        if rr is not None:
+            self.tire_state["rr"] = rr
 
     def set_websocket(self, websocket: WebSocket):
         """Register a connected websocket to enable server->client pushes."""
@@ -83,10 +106,12 @@ class F1Server:
                 return payload
         return payload
 
+    async def send_all_data(self, msg: str = ""):
+        await self.send_message(msg+f" Condition: {self.get_condition()} Tire State: {self.get_tire_state()}")
 
 # module-level instance for easy importing from other files
 server = F1Server()
-server.register_msg_handler(server.send_message)  # default message handler just sends the message back to the client
+server.register_msg_handler(server.send_all_data)  # default message handler 
 
 @app.websocket("/ws")
 async def f1_websocket(websocket: WebSocket):
@@ -108,6 +133,7 @@ async def f1_websocket(websocket: WebSocket):
             elif "trc" in payload:
                 # update condition using the component API
                 server.update_condition(trc=payload.get("trc"), air=payload.get("air"), hum=payload.get("hum"))
+                server.update_tire_state(fl=payload.get("fl"), fr=payload.get("fr"), rl=payload.get("rl"), rr=payload.get("rr"))
 
     except WebSocketDisconnect:
         print("disconnected")

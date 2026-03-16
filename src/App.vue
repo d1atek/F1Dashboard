@@ -42,7 +42,7 @@ onUnmounted(() => {
         </div>
         <TrackMap :progress="trackProgress" />
       </div>
-      <CarStatus :tires="{ fl: 12, fr: 15, rl: 45, rr: 75 }" />
+      <CarStatus :tires="{ fl: telemetry.fl.toFixed(0), fr: telemetry.fr.toFixed(0), rl: telemetry.rl.toFixed(0), rr: telemetry.rr.toFixed(0) }" />
     </div>
 
     <div class="dashboard-row">
