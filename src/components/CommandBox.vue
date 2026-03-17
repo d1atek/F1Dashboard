@@ -34,7 +34,7 @@ const onSubmit = () => {
   display: flex;
   gap: 10px;
   width: 100%;
-  max-width: 400px;
+  max-width: 800px;
 }
 .command-input {
   flex: 1;

@@ -41,14 +41,14 @@ onUnmounted(() => {
           <Gauge title="HUM" :value="telemetry.hum" :max="100" unit="%"  color="#3344ff" />
         </div>
         <TrackMap :progress="trackProgress" />
+        <CarStatus :tires="{ fl: telemetry.fl.toFixed(0), fr: telemetry.fr.toFixed(0), rl: telemetry.rl.toFixed(0), rr: telemetry.rr.toFixed(0) }" />
       </div>
-      <CarStatus :tires="{ fl: telemetry.fl.toFixed(0), fr: telemetry.fr.toFixed(0), rl: telemetry.rl.toFixed(0), rr: telemetry.rr.toFixed(0) }" />
+      <div>
+        <TeamRadio :latestMessage="latestMessage" />
+      </div>
     </div>
 
-    <div class="dashboard-row">
-      <TeamRadio :latestMessage="latestMessage" />
-      <CommandBox @sendCommand="sendMessage" />
-    </div>
+    <CommandBox @sendCommand="sendMessage" />
   </div>
 </template>
 

@@ -21,9 +21,9 @@ watch(() => props.latestMessage, (newMsg, oldMsg) => {
     const id = messageIdCounter++;
     activeMessages.value.unshift({ id, text: newMsg });
 
-    if (activeMessages.value.length > 3) {
-      activeMessages.value.pop();
-    }
+    //if (activeMessages.value.length > 3) {
+    //  activeMessages.value.pop();
+    //}
   }
 });
 </script>
@@ -45,10 +45,17 @@ watch(() => props.latestMessage, (newMsg, oldMsg) => {
 
 <style scoped>
 .radio-container {
+  min-width: 400px;
   width: 100%;
-  height: 240px;
+  height: 800px;
   max-width: 400px;
-  overflow: hidden; 
+  margin-top: 20px;
+  overflow-y: auto; 
+  overflow-x: hidden; 
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-right: 5px;
 }
 .radio-list {
   display: flex;
@@ -114,5 +121,23 @@ watch(() => props.latestMessage, (newMsg, oldMsg) => {
 
 .radio-text :deep(p) {
   margin: 0 0 8px 0; 
+}
+
+.radio-container::-webkit-scrollbar {
+  width: 6px; 
+}
+
+.radio-container::-webkit-scrollbar-track {
+  background: rgba(20, 20, 20, 0.5); 
+  border-radius: 4px;
+}
+
+.radio-container::-webkit-scrollbar-thumb {
+  background: #ff003c; 
+  border-radius: 4px;
+}
+
+.radio-container::-webkit-scrollbar-thumb:hover {
+  background: #cc0030; 
 }
 </style>
