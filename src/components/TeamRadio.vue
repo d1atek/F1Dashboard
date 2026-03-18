@@ -4,6 +4,7 @@ import { marked } from 'marked';
 
 interface Props {
   latestMessage: string;
+  isAnalysing: boolean;
 }
 
 const props = defineProps<Props>();
@@ -31,6 +32,15 @@ watch(() => props.latestMessage, (newMsg, oldMsg) => {
 <template>
   <div class="radio-container">
     <TransitionGroup name="radio-anim" tag="div" class="radio-list">
+
+      <div v-if="isAnalysing" key="loading-indicator" class="radio-box loading-box">
+        <div class="radio-header">
+          RACE ENGINEER
+        </div>
+        <div class="radio-text loading-text">
+          Analysing telemetry<span class="dots">...</span>
+        </div>
+      </div>
       
       <div v-for="msg in activeMessages" :key="msg.id" class="radio-box">
         <div class="radio-header">
@@ -139,5 +149,35 @@ watch(() => props.latestMessage, (newMsg, oldMsg) => {
 
 .radio-container::-webkit-scrollbar-thumb:hover {
   background: #cc0030; 
+}
+
+.loading-box {
+  border-left: 5px solid #fbd304; 
+  background-color: rgba(25, 20, 0, 0.95);
+}
+
+.loading-text {
+  color: #fbd304 !important;
+  font-style: italic;
+  font-weight: bold;
+  animation: pulse 1.5s infinite; 
+}
+
+@keyframes pulse {
+  0% { opacity: 0.4; }
+  50% { opacity: 1; }
+  100% { opacity: 0.4; }
+}
+
+.dots {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  animation: dots 1.5s linear infinite;
+  width: 0px;
+}
+
+@keyframes dots {
+  to { width: 1.25em; }
 }
 </style>

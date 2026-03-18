@@ -15,12 +15,14 @@ export function useTelemetry() {
   const statusColor = ref('yellow');
   const telemetry = ref<TelemetryData>({ trc: 0, air: 0, hum: 0, fl: 0, fr: 0, rl: 0, rr: 0 });
   const latestMessage = ref('');
+  const isAnalysing = ref(false);
   let ws: WebSocket | null = null;
   let intervalId: number | null = null;
 
   const sendMessage = (messageText: string) => {
     if (ws && ws.readyState === WebSocket.OPEN) {
       ws.send(JSON.stringify({ text: messageText }));
+      isAnalysing.value = true;
     }
   };
 
@@ -42,6 +44,7 @@ export function useTelemetry() {
       const data = JSON.parse(event.data);
       if (data.msg) {
         latestMessage.value = data.msg;
+        isAnalysing.value = false;
       }
       if (data.tyres) {
         telemetry.value.fl = 0;
@@ -90,6 +93,7 @@ export function useTelemetry() {
     statusColor,
     telemetry,
     latestMessage,
+    isAnalysing,
     sendMessage
   };
 }

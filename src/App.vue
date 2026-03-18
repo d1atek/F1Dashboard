@@ -7,7 +7,7 @@ import TeamRadio from './components/TeamRadio.vue';
 import CarStatus from './components/CarStatus.vue';
 import { useTelemetry } from './composables/useTelemetry';
 
-const { statusMessage, statusColor, telemetry, latestMessage, sendMessage } = useTelemetry();
+const { statusMessage, statusColor, telemetry, latestMessage, isAnalysing, sendMessage } = useTelemetry();
 
 const trackProgress = ref(0);
 let intervalId: number | null = null;
@@ -44,7 +44,7 @@ onUnmounted(() => {
         <CarStatus :tires="{ fl: telemetry.fl.toFixed(0), fr: telemetry.fr.toFixed(0), rl: telemetry.rl.toFixed(0), rr: telemetry.rr.toFixed(0) }" />
       </div>
       <div>
-        <TeamRadio :latestMessage="latestMessage" />
+        <TeamRadio :latestMessage="latestMessage" :isAnalysing="isAnalysing"/>
       </div>
     </div>
 
